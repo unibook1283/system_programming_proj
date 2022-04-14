@@ -1,13 +1,6 @@
 /* $begin shellmain */
 #include "csapp.h"
-#include "shellex.h"
-#include<errno.h>
-#define MAXARGS   128
-
-/* Function prototypes */
-void eval(char *cmdline);
-int parseline(char *buf, char **argv);
-int builtin_command(char **argv); 
+#include "myshell.h"
 
 int main() 
 {
@@ -40,11 +33,6 @@ void eval(char *cmdline)
     if (argv[0] == NULL)  
 	return;   /* Ignore empty lines */
     if (!builtin_command(argv)) { //quit -> exit(0), & -> ignore, other -> run
-        if (!strcmp(argv[0], "cd")) {
-            if (chdir(argv[1]) == -1)   // chdir error
-                printf("cd: %s: No such file or directory\n", argv[1]);
-            return;
-        }
         if (!strcmp(argv[0], "exit")) {
             exit(0);
         }
@@ -74,6 +62,11 @@ void eval(char *cmdline)
 /* If first arg is a builtin command, run it and return true */
 int builtin_command(char **argv) 
 {
+    if (!strcmp(argv[0], "cd")) {
+        if (chdir(argv[1]) == -1)   // chdir error
+            printf("cd: %s: No such file or directory\n", argv[1]);
+        return 1;
+    }
     if (!strcmp(argv[0], "quit")) /* quit command */
 	exit(0);  
     if (!strcmp(argv[0], "&"))    /* Ignore singleton & */
